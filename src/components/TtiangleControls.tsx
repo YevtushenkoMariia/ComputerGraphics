@@ -1,39 +1,28 @@
 import { COLORS } from "../constants/colors";
 import Point from "../models/Point";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PointInput from "./PointInput";
 import ColorPicker from "./СolorPicker";
-import type { TriangleLogsProps } from "../types/Logs";
 import { useCanvasSize } from "../context/CanvsSizeContext";
-import { useRef } from "react";
-const pointsInputs = [{ pointId: "A" }, { pointId: "B" }];
 import { ValidatePoints, randomInt } from "../utils/Validators";
 import ErrorSection from "./ErrorSection";
-import { useEffect } from "react";
-import Triangle from "../models/Triangle";
 import { createTriangle } from "../services/TriangleCreating";
+import apexOptions from "../constants/ApexTypes";
+import type { TriangleControlsProps } from "../types/props";
 
+const pointsInputs = [{ pointId: "A" }, { pointId: "B" }];
 
- 
-
-const apexOptions = [
-  { id: "None", label: "Відсутнє", checked: true },
-  { id: "Circle", label: "Коло", checked: false },
-  { id: "Square", label: "Квадрат", checked: false },
-];
-
-interface TriangleControlsProps {
-    onLog: (triangleLogs: TriangleLogsProps) => void;
-    onDraw: (triangle: Triangle) => void;
-    onReset: () => void;
-  }
-
-export default function TriangleControls( 
-    {onLog, onReset, onDraw}: TriangleControlsProps) {
-      const isFirstRun = useRef(true);
-
-  const [pointA, setPointA] = useState<Point>(new Point(randomInt(0, 10), randomInt(0, 10), "A"));
-  const [pointB, setPointB] = useState<Point>(new Point(randomInt(0, 10), randomInt(0, 10), "B"));
+export default function TriangleControls({
+  onLog,
+  onReset,
+  onDraw,
+}: TriangleControlsProps) {
+  const [pointA, setPointA] = useState<Point>(
+    new Point(randomInt(0, 10), randomInt(0, 10), "A"),
+  );
+  const [pointB, setPointB] = useState<Point>(
+    new Point(randomInt(0, 10), randomInt(0, 10), "B"),
+  );
   const [pointC1, setPointC1] = useState<Point | null>(null);
   const [pointC2, setPointC2] = useState<Point | null>(null);
   const [isC1Selected, setIsC1] = useState<boolean>(true);
@@ -51,14 +40,20 @@ export default function TriangleControls(
   const [isTwoApexValid, setIsTwoApexValid] = useState<boolean>(false);
 
   const handlePointChange = (pointId: string, value: Point) => {
-    if (pointId === "A") 
-      setPointA(new Point(value.x, value.y, value.name));
+    if (pointId === "A") setPointA(new Point(value.x, value.y, value.name));
     else if (pointId === "B")
       setPointB(new Point(value.x, value.y, value.name));
   };
 
   const handleCreateTriangle = () => {
-    const triangle = createTriangle(pointA, pointB, borderColor, fillColor, apex, isC1Selected);
+    const triangle = createTriangle(
+      pointA,
+      pointB,
+      borderColor,
+      fillColor,
+      apex,
+      isC1Selected,
+    );
     onDraw(triangle);
     onLog({
       name: "Triangle 1",
@@ -71,56 +66,65 @@ export default function TriangleControls(
     });
   };
 
-  const handleResetBoard =() => {
-   onReset();
+  const handleResetBoard = () => {
+    onReset();
   };
 
-  function ThirdApexPreview(){
-    const triangle = createTriangle(pointA, pointB, borderColor, fillColor, apex, isC1Selected);
+  function ThirdApexPreview() {
+    const triangle = createTriangle(
+      pointA,
+      pointB,
+      borderColor,
+      fillColor,
+      apex,
+      isC1Selected,
+    );
     triangle.FindThirdApex();
     setPointC1(triangle.pointC1!);
     setPointC2(triangle.pointC2!);
 
-    setIsC1Disabled(!triangle.IsPointInCanvas(triangle.pointC1!, canvasWidth, canvasHeight, step));
-    setIsC2Disabled(!triangle.IsPointInCanvas(triangle.pointC2!, canvasWidth, canvasHeight, step));
-
+    setIsC1Disabled(
+      !triangle.IsPointInCanvas(
+        triangle.pointC1!,
+        canvasWidth,
+        canvasHeight,
+        step,
+      ),
+    );
+    setIsC2Disabled(
+      !triangle.IsPointInCanvas(
+        triangle.pointC2!,
+        canvasWidth,
+        canvasHeight,
+        step,
+      ),
+    );
   }
 
   useEffect(() => {
-  
     const { isValid, errors } = ValidatePoints(pointA, pointB);
-  
+
     if (isValid) {
       setErrors([]);
       setIsTwoApexValid(true);
 
       ThirdApexPreview();
-      
     } else {
       setErrors(errors);
       setIsTwoApexValid(false);
     }
   }, [pointA, pointB]);
 
+  useEffect(() => {}, [isTwoApexValid]);
 
-  useEffect(() => {
-
-  
-    
-  }, [isTwoApexValid]);
-
-const handleThirdApexChange = (id: string) => {
-  if(id === "C1") setIsC1(true);
-  else if(id === "C2") setIsC1(false);
-};
-
-  const handleApexTypeChange = (id: string) => {
-   setApex(id);
+  const handleThirdApexChange = (id: string) => {
+    if (id === "C1") setIsC1(true);
+    else if (id === "C2") setIsC1(false);
   };
 
-
-
-
+  const handleApexTypeChange = (id: string) => {
+    setApex(id);
+  };
 
   return (
     <div
@@ -131,9 +135,13 @@ const handleThirdApexChange = (id: string) => {
 
       <div className="flex flex-col gap-2">
         {pointsInputs.map((point) => (
-          <PointInput key={point.pointId} pointId={point.pointId} initialPoint={point.pointId === "A" ? pointA : pointB}
-          onChange={(x, y) => handlePointChange(point.pointId, new Point(x, y, point.pointId))}
-
+          <PointInput
+            key={point.pointId}
+            pointId={point.pointId}
+            initialPoint={point.pointId === "A" ? pointA : pointB}
+            onChange={(x, y) =>
+              handlePointChange(point.pointId, new Point(x, y, point.pointId))
+            }
           />
         ))}
       </div>
@@ -155,22 +163,37 @@ const handleThirdApexChange = (id: string) => {
                 onChange={() => handleThirdApexChange("C1")}
                 disabled={isC1Disabled}
               />
-              <label htmlFor="third-apex-1" className={isC1Disabled ? "text-gray-500" : ""}>Перша вершина {isC1Disabled ? " (не в межах)" : ""}
-
+              <label
+                htmlFor="third-apex-1"
+                className={isC1Disabled ? "text-gray-500" : ""}
+              >
+                Перша вершина {isC1Disabled ? " (не в межах)" : ""}
                 {pointC1 && (
-                  <small className="text-xs text-gray-500"> ( {pointC1?.x.toFixed(2)} ; {pointC1?.y.toFixed(2)} )</small>
+                  <small className="text-xs text-gray-500">
+                    {" "}
+                    {pointC1.getString()}
+                  </small>
                 )}
               </label>
             </div>
             <div className="flex items-center gap-2 disabled:opacity-50">
-              <input 
-              type="radio" 
-              id="third-apex-2" name="third-apex" 
-              disabled={isC2Disabled}
-              onChange={() => handleThirdApexChange("C2")} />
-              <label htmlFor="third-apex-2" className={isC2Disabled ? "text-gray-500" : ""}>Друга вершина {isC2Disabled ? " (не в межах)" : ""}
+              <input
+                type="radio"
+                id="third-apex-2"
+                name="third-apex"
+                disabled={isC2Disabled}
+                onChange={() => handleThirdApexChange("C2")}
+              />
+              <label
+                htmlFor="third-apex-2"
+                className={isC2Disabled ? "text-gray-500" : ""}
+              >
+                Друга вершина {isC2Disabled ? " (не в межах)" : ""}
                 {pointC2 && (
-                  <small className="text-xs text-gray-500"> ( {pointC2?.x.toFixed(2)} ; {pointC2?.y.toFixed(2)} )</small>
+                  <small className="text-xs text-gray-500">
+                    {" "}
+                    {pointC2.getString()}
+                  </small>
                 )}
               </label>
             </div>
@@ -195,7 +218,6 @@ const handleThirdApexChange = (id: string) => {
           />
         </div>
       </div>
-
 
       <div>
         <h3 className="font-semibold mb-1">Позначення вершин:</h3>

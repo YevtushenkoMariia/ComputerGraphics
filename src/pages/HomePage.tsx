@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
-import { projects } from "../types/Projects";
+import { projects } from "../constants/Projects";
 import { COLORS } from "../constants/colors";
 
 export default function HomePage() {
   return (
     <>
       <div>
-        <header 
-         style={{ backgroundColor: COLORS.darkBlue }}
-        className="h-16 flex items-center justify-center fixed top-0 left-0 right-0 z-10">
+        <header
+          style={{ backgroundColor: COLORS.darkBlue }}
+          className="h-16 flex items-center justify-center fixed top-0 left-0 right-0 z-10">
           <h1 style={{ color: COLORS.white }} className="text-2xl font-bold">Computer Graphics Projects</h1>
         </header>
         <div className="bg-white mt-16 ">

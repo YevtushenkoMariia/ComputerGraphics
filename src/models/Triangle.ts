@@ -3,8 +3,11 @@ import { DrawCircleApex,  drawMySquare} from "../utils/DrawShapes";
 
 interface Shape{
   Draw(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, STEP: number): void;
+
   IsPointInCanvas(point: Point, canvasWidth: number, canvasHeight: number, STEP: number, canvas: HTMLCanvasElement): boolean;
+
   DrawApex(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, STEP: number, canvas: HTMLCanvasElement): void;
+
   WriteApexNames(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, STEP: number): void;
 }
 
@@ -39,11 +42,15 @@ export default class Triangle implements Shape{
       return this.IsC1;
     }
 
-    setIsC1(isC1: boolean){
+    setIsC1(isC1: boolean): void{
       this.IsC1 = isC1;
     }
   
-    FindThirdApex(){
+    /**
+     * @description Find the third apex of the triangle with 2 sides of the same length
+     * @returns void
+     */
+    FindThirdApex(): void{
 
       if(!this.pointA && !this.pointB){
         return;
@@ -88,7 +95,19 @@ export default class Triangle implements Shape{
       console.log("POINT C2 = " + cX2.toFixed(2) + " " + cY2.toFixed(2));
     }
   
-    Draw(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, STEP: number): void{
+    /**
+     * @description Draw the triangle fully with the using of 3 points
+     * @param c - canvas context
+     * @param canvasWidth - canvas width
+     * @param canvasHeight - canvas height
+     * @param STEP - step
+     */
+    Draw(
+      c: CanvasRenderingContext2D, 
+      canvasWidth: number, 
+      canvasHeight: number, 
+      STEP: number
+    ): void{
 
       const CENTER_X = canvasWidth / 2;
       const CENTER_Y = canvasHeight / 2;
@@ -117,8 +136,20 @@ export default class Triangle implements Shape{
       c.lineWidth = 1;
       c.stroke();
     }
-  
-    IsPointInCanvas(point: Point, canvasWidth: number, canvasHeight: number, STEP: number): boolean{
+
+    /**
+     * @description Check if the point is in the canvas and not out of the canvas
+     * @param point - point to check
+     * @param canvasWidth - canvas width
+     * @param canvasHeight - canvas height
+     * @param STEP - step
+     * @returns true if the point is in the canvas, false otherwise
+     */
+    IsPointInCanvas(
+      point: Point, 
+      canvasWidth: number, 
+      canvasHeight: number, 
+      STEP: number): boolean{
       console.log("Перевірка точки checkApex");
       const CENTER_X = canvasWidth / 2;
       const CENTER_Y = canvasHeight / 2;
@@ -141,6 +172,13 @@ export default class Triangle implements Shape{
       }
     }
   
+    /**
+     * @description Draw the apex of the triangle ( specific apex type )
+     * @param c - canvas context
+     * @param canvasWidth - canvas width
+     * @param canvasHeight - canvas height
+     * @param STEP - step
+     */
     DrawApex(
       c: CanvasRenderingContext2D, 
       canvasWidth: number, 
@@ -181,6 +219,13 @@ export default class Triangle implements Shape{
       c.globalAlpha = 1;
     }
   
+    /**
+     * @description Write the name of the apex of the triangle
+     * @param c - canvas context
+     * @param canvasWidth - canvas width
+     * @param canvasHeight - canvas height
+     * @param STEP - step
+     */
     WriteApexNames(
       c: CanvasRenderingContext2D, 
       canvasWidth: number, 
@@ -189,16 +234,33 @@ export default class Triangle implements Shape{
     ){
       const CENTER_X = canvasWidth / 2;
       const CENTER_Y = canvasHeight / 2;
+
       c.font = "16px Arial"; 
       c.fillStyle = "black"; 
   
-  
-      c.fillText(this.pointA.name, CENTER_X + this.pointA.x * STEP + 10, CENTER_Y - this.pointA.y * STEP - 10);
-      c.fillText(this.pointB.name, CENTER_X + this.pointB.x * STEP + 10, CENTER_Y - this.pointB.y * STEP - 10);
+      c.fillText(
+        this.pointA.name, 
+        CENTER_X + this.pointA.x * STEP + 10, 
+        CENTER_Y - this.pointA.y * STEP - 10
+      );
+      c.fillText(
+        this.pointB.name, 
+        CENTER_X + this.pointB.x * STEP + 10, 
+        CENTER_Y - this.pointB.y * STEP - 10
+      );
+
       if(this.IsC1 == true){
-        c.fillText(this.pointC1!.name, CENTER_X + this.pointC1!.x * STEP + 10, CENTER_Y - this.pointC1!.y * STEP - 10);
+        c.fillText(
+          this.pointC1!.name, 
+          CENTER_X + this.pointC1!.x * STEP + 10, 
+          CENTER_Y - this.pointC1!.y * STEP - 10
+        );
       }else{
-        c.fillText(this.pointC2!.name, CENTER_X + this.pointC2!.x * STEP + 10, CENTER_Y - this.pointC2!.y * STEP - 10);
+        c.fillText(
+          this.pointC2!.name, 
+          CENTER_X + this.pointC2!.x * STEP + 10, 
+          CENTER_Y - this.pointC2!.y * STEP - 10
+        );
       }
     }
   

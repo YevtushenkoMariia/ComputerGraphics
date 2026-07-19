@@ -7,6 +7,5 @@ export const COLORS: Record<string, string> = {
     lightGrey: "#c7c7c7",
     grey: "#808080",
     white: "#ffffff",
-   
   };
 
